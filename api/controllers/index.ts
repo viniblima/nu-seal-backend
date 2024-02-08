@@ -1,0 +1,1 @@
+export * as photoController from "./photo.controller";

@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  api:
+    container_name: api
+    restart: always
+    build: .
+    ports:
+      - ${PORT}:${PORT}
+    depends_on:
+      - db
+    volumes:
+    - .:/usr/src/app
+
+  db:
+    container_name: postgres
+    image: postgres
+    ports:
+      - '5433:${DB_PORT}'
+    volumes:
+      - data:/data/db
+    environment:
+      POSTGRES_PASSWORD: bewrhuioogri12378tgyeoub
+      POSTGRES_DB: database_name_church_backend
+      POSTGRES_USER: user_admin_church_backend
+      JWT_KEY: 'aihdouasHJGFIYUVKLTFUIYVLHJGFIUYOIVCXRDIFYGI'
+
+volumes: 
+ data: {}
