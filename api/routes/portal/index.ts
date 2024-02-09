@@ -1,8 +1,8 @@
 import { Router } from "express";
-import uploadRouter from "../upload.routes";
+import uploadRouter from "./upload.routes";
 
 const portalRouter = Router();
 
-portalRouter.use("/upload", uploadRouter)
+portalRouter.use("/upload", uploadRouter);
 
 export default portalRouter;
