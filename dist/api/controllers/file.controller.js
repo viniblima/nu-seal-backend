@@ -38,7 +38,9 @@ const create = (files) => __awaiter(void 0, void 0, void 0, function* () {
             objResult.original = {
                 fileName: fileName,
             };
-            const signer = new signer_p12_1.P12Signer(fs_1.default.readFileSync("./certs/cert.p12"));
+            const signer = new signer_p12_1.P12Signer(fs_1.default.readFileSync("./certs/cert.p12"), {
+                passphrase: process.env.CERT_PASSWORD,
+            });
             const pdfBuffer = fs_1.default.readFileSync(`./upload/${fileName}`);
             const pdfWithPlaceholder = (0, placeholder_plain_1.plainAddPlaceholder)({
                 pdfBuffer,

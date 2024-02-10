@@ -32,7 +32,9 @@ export const create = async (files: any) => {
         fileName: fileName,
       };
 
-      const signer = new P12Signer(fs.readFileSync("./certs/cert.p12"));
+      const signer = new P12Signer(fs.readFileSync("./certs/cert.p12"), {
+        passphrase: process.env.CERT_PASSWORD,
+      });
       const pdfBuffer = fs.readFileSync(`./upload/${fileName}`);
 
       const pdfWithPlaceholder = plainAddPlaceholder({

@@ -20,8 +20,8 @@ services:
       - data:/data/db
     environment:
       POSTGRES_PASSWORD: bewrhuioogri12378tgyeoub
-      POSTGRES_DB: database_name_church_backend
-      POSTGRES_USER: user_admin_church_backend
+      POSTGRES_DB: database_name_nu_seal
+      POSTGRES_USER: user_admin_nu_seal
       JWT_KEY: 'aihdouasHJGFIYUVKLTFUIYVLHJGFIUYOIVCXRDIFYGI'
 
 volumes: 
