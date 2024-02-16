@@ -38,44 +38,28 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
 const config_1 = __importDefault(require("../config"));
 const uuid = __importStar(require("uuid"));
-class Photo extends sequelize_1.Model {
+class Seal extends sequelize_1.Model {
 }
-Photo.init({
+Seal.init({
     id: {
         type: sequelize_1.DataTypes.STRING,
         allowNull: false,
         unique: true,
         primaryKey: true,
     },
-    referenceId: {
-        type: sequelize_1.DataTypes.STRING,
-        allowNull: true,
-    },
-    sealId: {
-        type: sequelize_1.DataTypes.STRING,
-        allowNull: true,
-    },
-    fileName: {
-        type: sequelize_1.DataTypes.STRING,
+    numSeal: {
+        type: sequelize_1.DataTypes.INTEGER,
         allowNull: false,
         unique: true,
     },
-    // index: {
-    //   type: DataTypes.INTEGER,
-    //   allowNull: false,
-    // },
-    // image: {
-    //   type: DataTypes.BLOB("long"),
-    //   allowNull: false,
-    // },
 }, {
     timestamps: true,
     sequelize: config_1.default,
-    modelName: "photo",
+    modelName: "seal",
     hooks: {
-        beforeValidate: (photo) => __awaiter(void 0, void 0, void 0, function* () {
-            photo.id = uuid.v4();
+        beforeValidate: (element) => __awaiter(void 0, void 0, void 0, function* () {
+            element.id = uuid.v4();
         }),
     },
 });
-exports.default = Photo;
+exports.default = Seal;

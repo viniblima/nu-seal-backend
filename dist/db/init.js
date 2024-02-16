@@ -12,5 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const models_1 = require("./models");
 const dbInit = () => __awaiter(void 0, void 0, void 0, function* () {
     yield models_1.Photo.sync({ alter: true });
+    yield models_1.Seal.sync({ alter: true });
 });
 exports.default = dbInit;

@@ -37,17 +37,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importStar(require("express"));
 const multer_1 = __importDefault(require("multer"));
-const uploadRouter = (0, express_1.Router)();
 const controllers_1 = require("../../controllers");
 const index_1 = require("../../middlewares/index");
-// const URL: string = path.basename("upload");
-// uploadRouter.use(bodyParser.json());
-// uploadRouter.use(bodyParser.urlencoded({ extended: true }));
+const uploadRouter = (0, express_1.Router)();
 uploadRouter.post("/", 
 // validateJwt,
 // multer(getMulterConfig).array("file"),
 (0, multer_1.default)().any(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(req.files);
     const result = yield controllers_1.fileController.create(req.files);
     return res.status(200).send(result);
 }));

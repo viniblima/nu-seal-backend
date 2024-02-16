@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.create = void 0;
+const models_1 = require("../../db/models");
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
 const mime_1 = __importDefault(require("mime"));
@@ -28,6 +29,7 @@ const create = (files) => __awaiter(void 0, void 0, void 0, function* () {
         if (!fs_1.default.existsSync(URL)) {
             fs_1.default.mkdirSync(URL);
         }
+        const sealQuantity = yield models_1.Seal.findAndCountAll();
         for (let index = 0; index < files.length; index++) {
             var objResult = {};
             const file = files[index];
@@ -35,9 +37,17 @@ const create = (files) => __awaiter(void 0, void 0, void 0, function* () {
             const fileName = `${new Date().getTime()}.${type}`;
             const target_path = "./upload/" + fileName;
             fs_1.default.writeFileSync(target_path, file.buffer);
+            const seal = yield models_1.Seal.create({
+                numSeal: sealQuantity.count + 1,
+            });
             objResult.original = {
                 fileName: fileName,
             };
+            yield models_1.Photo.create({
+                referenceId: "",
+                sealId: seal.id,
+                fileName: fileName,
+            });
             const signer = new signer_p12_1.P12Signer(fs_1.default.readFileSync("./certs/cert.p12"), {
                 passphrase: process.env.CERT_PASSWORD,
             });
@@ -55,6 +65,11 @@ const create = (files) => __awaiter(void 0, void 0, void 0, function* () {
             objResult.signed = {
                 fileName: fileName.replace(".pdf", "-signed.pdf"),
             };
+            yield models_1.Photo.create({
+                referenceId: "",
+                sealId: seal.id,
+                fileName: fileName.replace(".pdf", "-signed.pdf"),
+            });
             listFiles.push(objResult);
             //   fs.rename(fileName, target_path, function (err) {
             // if (err) throw err;
@@ -67,7 +82,6 @@ const create = (files) => __awaiter(void 0, void 0, void 0, function* () {
         return { success: true, list: listFiles };
     }
     catch (e) {
-        console.log(e);
         return { success: false, error: e };
     }
 });

@@ -18,16 +18,19 @@ Photo.init(
       type: DataTypes.STRING,
       allowNull: true,
     },
+    sealId: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     fileName: {
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
-      primaryKey: true,
     },
-    index: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
+    // index: {
+    //   type: DataTypes.INTEGER,
+    //   allowNull: false,
+    // },
     // image: {
     //   type: DataTypes.BLOB("long"),
     //   allowNull: false,

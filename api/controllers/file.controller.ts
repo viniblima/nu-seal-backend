@@ -1,4 +1,4 @@
-import { Photo } from "../../db/models";
+import { Photo, Seal } from "../../db/models";
 import path from "path";
 import fs from "fs";
 import mime from "mime";
@@ -19,6 +19,8 @@ export const create = async (files: any) => {
       fs.mkdirSync(URL);
     }
 
+    const sealQuantity = await Seal.findAndCountAll();
+
     for (let index = 0; index < files.length; index++) {
       var objResult: any = {};
       const file: any = files[index];
@@ -28,9 +30,19 @@ export const create = async (files: any) => {
 
       fs.writeFileSync(target_path, file.buffer);
 
+      const seal = await Seal.create({
+        numSeal: sealQuantity.count + 1,
+      });
+
       objResult.original = {
         fileName: fileName,
       };
+
+      await Photo.create({
+        referenceId: "",
+        sealId: seal.id,
+        fileName: fileName,
+      });
 
       const signer = new P12Signer(fs.readFileSync("./certs/cert.p12"), {
         passphrase: process.env.CERT_PASSWORD,
@@ -56,6 +68,12 @@ export const create = async (files: any) => {
         fileName: fileName.replace(".pdf", "-signed.pdf"),
       };
 
+      await Photo.create({
+        referenceId: "",
+        sealId: seal.id,
+        fileName: fileName.replace(".pdf", "-signed.pdf"),
+      });
+
       listFiles.push(objResult);
       //   fs.rename(fileName, target_path, function (err) {
       // if (err) throw err;
@@ -68,7 +86,6 @@ export const create = async (files: any) => {
 
     return { success: true, list: listFiles };
   } catch (e) {
-    console.log(e);
     return { success: false, error: e };
   }
 };
