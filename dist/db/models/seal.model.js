@@ -52,6 +52,11 @@ Seal.init({
         allowNull: false,
         unique: true,
     },
+    isValid: {
+        type: sequelize_1.DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+    },
 }, {
     timestamps: true,
     sequelize: config_1.default,

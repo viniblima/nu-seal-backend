@@ -13,8 +13,12 @@ exports.detail = exports.count = void 0;
 const models_1 = require("../../db/models");
 const count = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const seal = yield models_1.Seal.findAndCountAll();
-        return { success: true, nextNumber: seal.count + 1 };
+        const count = yield models_1.Seal.findAndCountAll();
+        const seal = yield models_1.Seal.create({
+            numSeal: count.count + 1,
+            isValid: false,
+        });
+        return { success: true, seal };
     }
     catch (e) {
         return { success: false, error: e };

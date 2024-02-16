@@ -40,11 +40,11 @@ const multer_1 = __importDefault(require("multer"));
 const controllers_1 = require("../../controllers");
 const index_1 = require("../../middlewares/index");
 const uploadRouter = (0, express_1.Router)();
-uploadRouter.post("/", 
+uploadRouter.post("/:id", 
 // validateJwt,
 // multer(getMulterConfig).array("file"),
 (0, multer_1.default)().any(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield controllers_1.fileController.create(req.files);
+    const result = yield controllers_1.fileController.create(req.files, req.params.id);
     return res.status(200).send(result);
 }));
 uploadRouter.get("/:id", index_1.validateJwt, express_1.default.static("upload"));

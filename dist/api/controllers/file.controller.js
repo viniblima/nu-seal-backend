@@ -21,7 +21,7 @@ const signpdf_1 = __importDefault(require("@signpdf/signpdf"));
 const signer_p12_1 = require("@signpdf/signer-p12");
 const placeholder_plain_1 = require("@signpdf/placeholder-plain");
 const URL = path_1.default.basename("upload");
-const create = (files) => __awaiter(void 0, void 0, void 0, function* () {
+const create = (files, idSeal) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const listFiles = [];
         const dir = fs_1.default.existsSync(URL);
@@ -29,7 +29,7 @@ const create = (files) => __awaiter(void 0, void 0, void 0, function* () {
         if (!fs_1.default.existsSync(URL)) {
             fs_1.default.mkdirSync(URL);
         }
-        const sealQuantity = yield models_1.Seal.findAndCountAll();
+        // const sealQuantity = await Seal.findAndCountAll();
         for (let index = 0; index < files.length; index++) {
             var objResult = {};
             const file = files[index];
@@ -37,8 +37,10 @@ const create = (files) => __awaiter(void 0, void 0, void 0, function* () {
             const fileName = `${new Date().getTime()}.${type}`;
             const target_path = "./upload/" + fileName;
             fs_1.default.writeFileSync(target_path, file.buffer);
-            const seal = yield models_1.Seal.create({
-                numSeal: sealQuantity.count + 1,
+            const seal = yield models_1.Seal.findOne({
+                where: {
+                    id: idSeal,
+                },
             });
             objResult.original = {
                 fileName: fileName,
@@ -69,6 +71,13 @@ const create = (files) => __awaiter(void 0, void 0, void 0, function* () {
                 referenceId: "",
                 sealId: seal.id,
                 fileName: fileName.replace(".pdf", "-signed.pdf"),
+            });
+            yield models_1.Seal.update({
+                isValid: true,
+            }, {
+                where: {
+                    id: idSeal,
+                },
             });
             listFiles.push(objResult);
             //   fs.rename(fileName, target_path, function (err) {

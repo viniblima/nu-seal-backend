@@ -6,12 +6,12 @@ import { validateJwt } from "../../middlewares/index";
 const uploadRouter = Router();
 
 uploadRouter.post(
-  "/",
+  "/:id",
   // validateJwt,
   // multer(getMulterConfig).array("file"),
   multer().any(),
   async (req: Request, res: Response) => {
-    const result = await fileController.create(req.files!);
+    const result = await fileController.create(req.files!, req.params.id);
 
     return res.status(200).send(result);
   }

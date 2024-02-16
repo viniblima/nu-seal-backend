@@ -9,7 +9,7 @@ import { plainAddPlaceholder } from "@signpdf/placeholder-plain";
 
 const URL: string = path.basename("upload");
 
-export const create = async (files: any) => {
+export const create = async (files: any, idSeal: string) => {
   try {
     const listFiles = [];
     const dir = fs.existsSync(URL);
@@ -19,7 +19,7 @@ export const create = async (files: any) => {
       fs.mkdirSync(URL);
     }
 
-    const sealQuantity = await Seal.findAndCountAll();
+    // const sealQuantity = await Seal.findAndCountAll();
 
     for (let index = 0; index < files.length; index++) {
       var objResult: any = {};
@@ -30,8 +30,10 @@ export const create = async (files: any) => {
 
       fs.writeFileSync(target_path, file.buffer);
 
-      const seal = await Seal.create({
-        numSeal: sealQuantity.count + 1,
+      const seal = await Seal.findOne({
+        where: {
+          id: idSeal,
+        },
       });
 
       objResult.original = {
@@ -40,7 +42,7 @@ export const create = async (files: any) => {
 
       await Photo.create({
         referenceId: "",
-        sealId: seal.id,
+        sealId: seal!.id,
         fileName: fileName,
       });
 
@@ -70,9 +72,20 @@ export const create = async (files: any) => {
 
       await Photo.create({
         referenceId: "",
-        sealId: seal.id,
+        sealId: seal!.id,
         fileName: fileName.replace(".pdf", "-signed.pdf"),
       });
+
+      await Seal.update(
+        {
+          isValid: true,
+        },
+        {
+          where: {
+            id: idSeal,
+          },
+        }
+      );
 
       listFiles.push(objResult);
       //   fs.rename(fileName, target_path, function (err) {

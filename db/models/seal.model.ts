@@ -19,6 +19,11 @@ Seal.init(
       allowNull: false,
       unique: true,
     },
+    isValid: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
   },
   {
     timestamps: true,
