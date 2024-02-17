@@ -28,9 +28,13 @@ exports.count = count;
 const detail = (id) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const seal = yield models_1.Seal.findOne({
-            where: {
-                id: id,
-            },
+            where: id.includes("-")
+                ? {
+                    id: id,
+                }
+                : {
+                    numSeal: id,
+                },
         });
         if (!seal) {
             return { success: false, error: "Seal not found" };

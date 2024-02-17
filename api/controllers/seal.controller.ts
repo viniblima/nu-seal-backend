@@ -1,3 +1,4 @@
+import { Op } from "sequelize";
 import { Seal } from "../../db/models";
 
 export const count = async () => {
@@ -18,9 +19,13 @@ export const count = async () => {
 export const detail = async (id: string) => {
   try {
     const seal = await Seal.findOne({
-      where: {
-        id: id,
-      },
+      where: id.includes("-")
+        ? {
+            id: id,
+          }
+        : {
+            numSeal: id,
+          },
     });
 
     if (!seal) {
