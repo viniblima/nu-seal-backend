@@ -68,7 +68,7 @@ export const create = async (files: any, idSeal: string) => {
 
       objResult.signed = {
         fileName: fileName.replace(".pdf", "-signed.pdf"),
-        file: new Blob([file.buffer]),
+        file: new Blob([signedPdf]),
       };
 
       await Photo.create({
