@@ -24,6 +24,8 @@ uploadRouter.delete(
   validateJwt,
   async (req: Request, res: Response) => {
     const result: any = await fileController.removeFile(req.params.id);
+
+    return res.status(200).send(result);
   }
 );
 
