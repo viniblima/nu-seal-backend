@@ -9,6 +9,23 @@ import { plainAddPlaceholder } from "@signpdf/placeholder-plain";
 
 const URL: string = path.basename("upload");
 
+export const removeFile = async (id: string) => {
+  try {
+    fs.unlink(`${URL}/${id}.pdf`, (err) => {
+      if (err) {
+        return { success: false, error: err };
+      }
+    });
+    fs.unlink(`${URL}/${id}-signed.pdf`, (err) => {
+      if (err) {
+        return { success: false, error: err };
+      }
+    });
+    return { success: true, msg: "Ok" };
+  } catch (error) {
+    return { success: false, error: error };
+  }
+};
 export const create = async (files: any, idSeal: string) => {
   try {
     const listFiles = [];
@@ -49,10 +66,11 @@ export const create = async (files: any, idSeal: string) => {
     const signer = new P12Signer(fs.readFileSync("./certs/cert.p12"), {
       passphrase: process.env.CERT_PASSWORD,
     });
-    // const pdfBuffer = fs.readFileSync(`./upload/${fileName}`);
+    const pdfBuffer = fs.readFileSync(`./upload/${fileName}`);
 
     const pdfWithPlaceholder = plainAddPlaceholder({
-      pdfBuffer: file.buffer,
+      // pdfBuffer: file.buffer,
+      pdfBuffer,
       reason: "The user is declaring consent.",
       contactInfo: "nuseal@email.com",
       name: "Teste",
@@ -61,14 +79,13 @@ export const create = async (files: any, idSeal: string) => {
 
     const signedPdf = await signpdf.sign(pdfWithPlaceholder, signer);
 
-    // const target_path_signed =
-    //   "./upload/" + fileName.replace(".pdf", "-signed.pdf");
+    const target_path_signed =
+      "./upload/" + fileName.replace(".pdf", "-signed.pdf");
 
-    // fs.writeFileSync(target_path_signed, signedPdf);
+    fs.writeFileSync(target_path_signed, signedPdf);
 
     objResult.signed = {
       fileName: fileName.replace(".pdf", "-signed.pdf"),
-      file: new Blob([signedPdf]),
     };
 
     await Photo.create({
@@ -98,7 +115,7 @@ export const create = async (files: any, idSeal: string) => {
     //   });
     // }
 
-    return { success: true, buffer: signedPdf };
+    return { success: true, result: objResult };
   } catch (e) {
     return { success: false, error: e };
   }
