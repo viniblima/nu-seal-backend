@@ -1,6 +1,7 @@
 import { DataTypes, Model } from "sequelize";
 import sequelizeConnection from "../config";
 import * as uuid from "uuid";
+import { PhotoType } from "../enum";
 
 class Photo extends Model {
   public id: string;
@@ -26,6 +27,11 @@ Photo.init(
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
+    },
+    type: {
+      type: DataTypes.ENUM(...Object.values(PhotoType)),
+      allowNull: false,
+      defaultValue: PhotoType.file,
     },
     // index: {
     //   type: DataTypes.INTEGER,

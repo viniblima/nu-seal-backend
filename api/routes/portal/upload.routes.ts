@@ -17,6 +17,30 @@ uploadRouter.post(
   }
 );
 
+uploadRouter.post(
+  "/seal",
+  multer().any(),
+  async (req: Request, res: Response) => {
+    const result = await fileController.createSeal(req.files);
+
+    if (result.success) {
+      return res.status(200).send(result);
+    } else {
+      return res.status(400).send({ error: result.error });
+    }
+  }
+);
+
+uploadRouter.get("/seal", async (req: Request, res: Response) => {
+  const result = await fileController.getSeal();
+
+  if (result.success) {
+    return res.status(200).send(result);
+  } else {
+    return res.status(400).send({ error: result.error });
+  }
+});
+
 uploadRouter.get("/:id", validateJwt, express.static("upload"));
 
 uploadRouter.delete(

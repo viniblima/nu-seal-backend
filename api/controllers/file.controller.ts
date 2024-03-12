@@ -6,6 +6,7 @@ import mime from "mime";
 import signpdf from "@signpdf/signpdf";
 import { P12Signer } from "@signpdf/signer-p12";
 import { plainAddPlaceholder } from "@signpdf/placeholder-plain";
+import { PhotoType } from "../../db/enum";
 
 const URL: string = path.basename("upload");
 
@@ -118,5 +119,59 @@ export const create = async (files: any, idSeal: string) => {
     return { success: true, result: objResult };
   } catch (e) {
     return { success: false, error: e };
+  }
+};
+
+export const createSeal = async (files: any) => {
+  try {
+    const photoSeal = await Photo.findOne({
+      where: {
+        type: PhotoType.imgSeal,
+      },
+    });
+
+    if (photoSeal) {
+      fs.unlink(`${URL}/${photoSeal.dataValues.fileName}`, (err) => {
+        if (err) {
+          return { success: false, error: err };
+        }
+      });
+
+      await Photo.destroy({
+        where: {
+          type: PhotoType.imgSeal,
+        },
+      });
+    }
+    const file: any = files[0];
+    const type = mime.extension(file.mimetype);
+    const fileName: string = `${new Date().getTime()}.${type}`;
+    const target_path = "./upload/" + fileName;
+
+    fs.writeFileSync(target_path, file.buffer);
+
+    const result = await Photo.create({
+      referenceId: "",
+      sealId: "",
+      fileName: fileName,
+      type: PhotoType.imgSeal,
+    });
+
+    return { success: true, result };
+  } catch (error) {
+    return { success: false, error: error };
+  }
+};
+
+export const getSeal = async () => {
+  try {
+    const photoSeal = await Photo.findOne({
+      where: {
+        type: PhotoType.imgSeal,
+      },
+    });
+    return { success: true, result: photoSeal };
+  } catch (error) {
+    return { success: false, error: error };
   }
 };
