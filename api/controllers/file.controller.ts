@@ -130,6 +130,7 @@ export const createSeal = async (files: any) => {
       },
     });
 
+    console.log(photoSeal);
     if (photoSeal) {
       console.log("chegou aqui 1");
       fs.unlink(`${URL}/${photoSeal.dataValues.fileName}`, (err) => {
