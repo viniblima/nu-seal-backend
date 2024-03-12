@@ -50,7 +50,7 @@ export const create = async (files: any, idSeal: string) => {
         passphrase: process.env.CERT_PASSWORD,
       });
       const pdfBuffer = fs.readFileSync(`./upload/${fileName}`);
-
+      console.log(file.buffer);
       const pdfWithPlaceholder = plainAddPlaceholder({
         pdfBuffer,
         reason: "The user is declaring consent.",
