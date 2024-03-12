@@ -11,12 +11,12 @@ const URL: string = path.basename("upload");
 
 export const removeFile = async (id: string) => {
   try {
-    fs.unlink(`${URL}/${id}.pdf`, (err) => {
+    fs.unlink(`${URL}/${id}`, (err) => {
       if (err) {
         return { success: false, error: err };
       }
     });
-    fs.unlink(`${URL}/${id}-signed.pdf`, (err) => {
+    fs.unlink(`${URL}/${id.replace(".pdf", "-signed.pdf")}`, (err) => {
       if (err) {
         return { success: false, error: err };
       }
