@@ -21,84 +21,84 @@ export const create = async (files: any, idSeal: string) => {
 
     // const sealQuantity = await Seal.findAndCountAll();
 
-    for (let index = 0; index < files.length; index++) {
-      var objResult: any = {};
-      const file: any = files[index];
-      const type = mime.extension(file.mimetype);
-      const fileName: string = `${new Date().getTime()}.${type}`;
-      const target_path = "./upload/" + fileName;
+    // for (let index = 0; index < files.length; index++) {
+    var objResult: any = {};
+    const file: any = files[0];
+    const type = mime.extension(file.mimetype);
+    const fileName: string = `${new Date().getTime()}.${type}`;
+    const target_path = "./upload/" + fileName;
 
-      fs.writeFileSync(target_path, file.buffer);
+    fs.writeFileSync(target_path, file.buffer);
 
-      const seal = await Seal.findOne({
+    const seal = await Seal.findOne({
+      where: {
+        id: idSeal,
+      },
+    });
+
+    objResult.original = {
+      fileName: fileName,
+    };
+
+    await Photo.create({
+      referenceId: "",
+      sealId: seal!.id,
+      fileName: fileName,
+    });
+
+    const signer = new P12Signer(fs.readFileSync("./certs/cert.p12"), {
+      passphrase: process.env.CERT_PASSWORD,
+    });
+    // const pdfBuffer = fs.readFileSync(`./upload/${fileName}`);
+
+    const pdfWithPlaceholder = plainAddPlaceholder({
+      pdfBuffer: file.buffer,
+      reason: "The user is declaring consent.",
+      contactInfo: "nuseal@email.com",
+      name: "Teste",
+      location: "Rua teste, 1234",
+    });
+
+    const signedPdf = await signpdf.sign(pdfWithPlaceholder, signer);
+
+    // const target_path_signed =
+    //   "./upload/" + fileName.replace(".pdf", "-signed.pdf");
+
+    // fs.writeFileSync(target_path_signed, signedPdf);
+
+    objResult.signed = {
+      fileName: fileName.replace(".pdf", "-signed.pdf"),
+      file: new Blob([signedPdf]),
+    };
+
+    await Photo.create({
+      referenceId: "",
+      sealId: seal!.id,
+      fileName: fileName.replace(".pdf", "-signed.pdf"),
+    });
+
+    await Seal.update(
+      {
+        isValid: true,
+      },
+      {
         where: {
           id: idSeal,
         },
-      });
+      }
+    );
 
-      objResult.original = {
-        fileName: fileName,
-      };
+    // listFiles.push(objResult);
+    //   fs.rename(fileName, target_path, function (err) {
+    // if (err) throw err;
+    // fs.unlink(fileName, function () {
+    //   if (err) throw err;
+    //   // res.send('File uploaded to: ' + target_path + ' - ' + req.files.thumbnail.size + ' bytes');
+    // });
+    //   });
+    // }
 
-      await Photo.create({
-        referenceId: "",
-        sealId: seal!.id,
-        fileName: fileName,
-      });
-
-      const signer = new P12Signer(fs.readFileSync("./certs/cert.p12"), {
-        passphrase: process.env.CERT_PASSWORD,
-      });
-      // const pdfBuffer = fs.readFileSync(`./upload/${fileName}`);
-
-      const pdfWithPlaceholder = plainAddPlaceholder({
-        pdfBuffer: file.buffer,
-        reason: "The user is declaring consent.",
-        contactInfo: "nuseal@email.com",
-        name: "Teste",
-        location: "Rua teste, 1234",
-      });
-
-      const signedPdf = await signpdf.sign(pdfWithPlaceholder, signer);
-
-      // const target_path_signed =
-      //   "./upload/" + fileName.replace(".pdf", "-signed.pdf");
-
-      // fs.writeFileSync(target_path_signed, signedPdf);
-
-      objResult.signed = {
-        fileName: fileName.replace(".pdf", "-signed.pdf"),
-        file: new Blob([signedPdf]),
-      };
-
-      await Photo.create({
-        referenceId: "",
-        sealId: seal!.id,
-        fileName: fileName.replace(".pdf", "-signed.pdf"),
-      });
-
-      await Seal.update(
-        {
-          isValid: true,
-        },
-        {
-          where: {
-            id: idSeal,
-          },
-        }
-      );
-
-      listFiles.push(objResult);
-      //   fs.rename(fileName, target_path, function (err) {
-      // if (err) throw err;
-      // fs.unlink(fileName, function () {
-      //   if (err) throw err;
-      //   // res.send('File uploaded to: ' + target_path + ' - ' + req.files.thumbnail.size + ' bytes');
-      // });
-      //   });
-    }
-
-    return { success: true, list: listFiles };
+    return { success: true, buffer: signedPdf };
   } catch (e) {
     return { success: false, error: e };
   }
