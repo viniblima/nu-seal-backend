@@ -6,21 +6,10 @@ import { validateJwt } from "../../middlewares/index";
 const uploadRouter = Router();
 
 uploadRouter.post(
-  "/:id",
-  // validateJwt,
-  // multer(getMulterConfig).array("file"),
-  multer().any(),
-  async (req: Request, res: Response) => {
-    const result = await fileController.create(req.files!, req.params.id);
-
-    return res.status(200).send(result);
-  }
-);
-
-uploadRouter.post(
   "/seal",
   multer().any(),
   async (req: Request, res: Response) => {
+    console.log(req.files);
     const result = await fileController.createSeal(req.files);
 
     if (result.success) {
@@ -40,6 +29,18 @@ uploadRouter.get("/seal", async (req: Request, res: Response) => {
     return res.status(400).send({ error: result.error });
   }
 });
+
+uploadRouter.post(
+  "/:id",
+  // validateJwt,
+  // multer(getMulterConfig).array("file"),
+  multer().any(),
+  async (req: Request, res: Response) => {
+    const result = await fileController.create(req.files!, req.params.id);
+
+    return res.status(200).send(result);
+  }
+);
 
 uploadRouter.get("/:id", validateJwt, express.static("upload"));
 

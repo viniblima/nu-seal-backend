@@ -40,6 +40,25 @@ const multer_1 = __importDefault(require("multer"));
 const controllers_1 = require("../../controllers");
 const index_1 = require("../../middlewares/index");
 const uploadRouter = (0, express_1.Router)();
+uploadRouter.post("/seal", (0, multer_1.default)().any(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(req.files);
+    const result = yield controllers_1.fileController.createSeal(req.files);
+    if (result.success) {
+        return res.status(200).send(result);
+    }
+    else {
+        return res.status(400).send({ error: result.error });
+    }
+}));
+uploadRouter.get("/seal", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield controllers_1.fileController.getSeal();
+    if (result.success) {
+        return res.status(200).send(result);
+    }
+    else {
+        return res.status(400).send({ error: result.error });
+    }
+}));
 uploadRouter.post("/:id", 
 // validateJwt,
 // multer(getMulterConfig).array("file"),
@@ -48,4 +67,8 @@ uploadRouter.post("/:id",
     return res.status(200).send(result);
 }));
 uploadRouter.get("/:id", index_1.validateJwt, express_1.default.static("upload"));
+uploadRouter.delete("/:id", index_1.validateJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield controllers_1.fileController.removeFile(req.params.id);
+    return res.status(200).send(result);
+}));
 exports.default = uploadRouter;

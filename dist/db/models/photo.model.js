@@ -38,6 +38,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
 const config_1 = __importDefault(require("../config"));
 const uuid = __importStar(require("uuid"));
+const enum_1 = require("../enum");
 class Photo extends sequelize_1.Model {
 }
 Photo.init({
@@ -59,6 +60,11 @@ Photo.init({
         type: sequelize_1.DataTypes.STRING,
         allowNull: false,
         unique: true,
+    },
+    type: {
+        type: sequelize_1.DataTypes.ENUM(...Object.values(enum_1.PhotoType)),
+        allowNull: false,
+        defaultValue: enum_1.PhotoType.file,
     },
     // index: {
     //   type: DataTypes.INTEGER,
