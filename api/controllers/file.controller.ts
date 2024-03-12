@@ -49,10 +49,10 @@ export const create = async (files: any, idSeal: string) => {
       const signer = new P12Signer(fs.readFileSync("./certs/cert.p12"), {
         passphrase: process.env.CERT_PASSWORD,
       });
-      const pdfBuffer = fs.readFileSync(`./upload/${fileName}`);
-      console.log(file.buffer);
+      // const pdfBuffer = fs.readFileSync(`./upload/${fileName}`);
+
       const pdfWithPlaceholder = plainAddPlaceholder({
-        pdfBuffer,
+        pdfBuffer: file.buffer,
         reason: "The user is declaring consent.",
         contactInfo: "nuseal@email.com",
         name: "Teste",
@@ -61,13 +61,14 @@ export const create = async (files: any, idSeal: string) => {
 
       const signedPdf = await signpdf.sign(pdfWithPlaceholder, signer);
 
-      const target_path_signed =
-        "./upload/" + fileName.replace(".pdf", "-signed.pdf");
+      // const target_path_signed =
+      //   "./upload/" + fileName.replace(".pdf", "-signed.pdf");
 
-      fs.writeFileSync(target_path_signed, signedPdf);
+      // fs.writeFileSync(target_path_signed, signedPdf);
 
       objResult.signed = {
         fileName: fileName.replace(".pdf", "-signed.pdf"),
+        file: new Blob([file.buffer]),
       };
 
       await Photo.create({
