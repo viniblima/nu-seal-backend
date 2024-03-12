@@ -131,8 +131,10 @@ export const createSeal = async (files: any) => {
     });
 
     if (photoSeal) {
+      console.log("chegou aqui 1");
       fs.unlink(`${URL}/${photoSeal.dataValues.fileName}`, (err) => {
         if (err) {
+          console.log("chegou aqui 2");
           return { success: false, error: err };
         }
       });
@@ -143,6 +145,7 @@ export const createSeal = async (files: any) => {
         },
       });
     }
+    console.log("chegou aqui 3");
     const file: any = files[0];
     const type = mime.extension(file.mimetype);
     const fileName: string = `${new Date().getTime()}.${type}`;
@@ -159,6 +162,7 @@ export const createSeal = async (files: any) => {
 
     return { success: true, result };
   } catch (error) {
+    console.log("chegou aqui 4");
     return { success: false, error: error };
   }
 };
